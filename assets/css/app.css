@@ -137,10 +137,143 @@ textarea.cv-input { resize: vertical; min-height: 5.5rem; }
 .cv-tab[data-weight="dim"][aria-selected="true"] { opacity: 1; }
 .cv-tab[hidden] { display: none; }
 
-/* Móvil: pestañas Editar / Vista previa */
+/* ---------- Layout: escritorio vs. móvil (solo CSS → sin saltos de layout) ---------- */
+.cv-desktop { display: none; }
+.cv-mobile-ui { display: block; }
+@media (min-width: 1024px) {
+	.cv-desktop {
+		display: grid;
+		grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+		gap: 2rem;
+		align-items: start;
+	}
+	.cv-mobile-ui { display: none; }
+}
+
+/* ---------- Interfaz móvil (asistente por pasos) ---------- */
+.m-top { position: sticky; top: 0.5rem; z-index: 30; }
+.m-btn {
+	min-height: 3rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	padding: 0 1.25rem;
+	border-radius: 0.9rem;
+	font-weight: 600;
+	font-size: 0.95rem;
+	-webkit-tap-highlight-color: transparent;
+}
+.m-btn-primary {
+	background: linear-gradient(90deg, #1e3a5f, #4f46e5);
+	color: #fff;
+	box-shadow: 0 8px 20px -8px rgba(79, 70, 229, 0.55);
+}
+.m-btn-primary:disabled { opacity: 0.6; }
+.m-btn:active { transform: scale(0.98); }
+
+.m-card {
+	display: block;
+	width: 100%;
+	text-align: left;
+	padding: 1rem;
+	min-height: 3.75rem;
+	border-radius: 1rem;
+	border: 2px solid #e2e8f0;
+	background: rgba(255, 255, 255, 0.8);
+	transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+.m-card[aria-pressed="true"] {
+	border-color: #4f46e5;
+	background: #fff;
+	box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+.m-entry {
+	border: 1px solid #e2e8f0;
+	border-radius: 1rem;
+	background: rgba(255, 255, 255, 0.85);
+	overflow: hidden;
+}
+.m-entry-head {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.85rem 1rem;
+	min-height: 3.5rem;
+	text-align: left;
+}
+
+/* Barra inferior fija: solo visible con el generador en pantalla y sin teclado abierto */
+.m-bottom {
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 40;
+	display: flex;
+	gap: 0.75rem;
+	padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
+	border-radius: 1.25rem 1.25rem 0 0;
+	transform: translateY(110%);
+	transition: transform 0.25s ease;
+}
+.m-bottom[data-show="true"] { transform: none; }
+.m-bottom[data-kb="true"] { transform: translateY(110%); }
+
+/* Vista previa a pantalla completa */
+html.cv-lock { overflow: hidden; }
+.cv-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 60;
+	display: flex;
+	flex-direction: column;
+	background: #e8edf6;
+	height: 100vh;
+	height: 100dvh;
+}
+.cv-overlay[hidden] { display: none; }
+.cv-overlay-bar {
+	display: flex;
+	align-items: center;
+	gap: 0.6rem;
+	padding: 0.6rem 0.75rem;
+	padding-top: calc(0.6rem + env(safe-area-inset-top));
+	background: rgba(255, 255, 255, 0.85);
+	border-bottom: 1px solid #e2e8f0;
+}
+.cv-overlay-body {
+	flex: 1;
+	overflow: auto;
+	padding: 0.75rem;
+	-webkit-overflow-scrolling: touch;
+}
+.cv-overlay-foot {
+	padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom));
+	background: rgba(255, 255, 255, 0.9);
+	border-top: 1px solid #e2e8f0;
+}
+.m-seg {
+	flex: 1;
+	min-height: 2.75rem;
+	border-radius: 0.6rem;
+	font-weight: 600;
+	font-size: 0.9rem;
+	color: #475569;
+}
+.m-seg[aria-pressed="true"] {
+	background: #fff;
+	color: #1e3a5f;
+	box-shadow: 0 2px 8px rgba(30, 58, 95, 0.15);
+}
+
+/* Campos táctiles: 16px evita el zoom automático de iOS */
 @media (max-width: 1023px) {
-	#cv-app[data-mobile-view="edit"] [data-pane="preview"] { display: none; }
-	#cv-app[data-mobile-view="preview"] [data-pane="edit"] { display: none; }
+	.cv-input { font-size: 1rem; min-height: 3rem; }
+	textarea.cv-input { min-height: 7rem; }
+	.cv-label { font-size: 0.82rem; }
 }
 
 [data-form-panel][hidden] { display: none; }

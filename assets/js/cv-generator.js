@@ -1048,7 +1048,7 @@
 		}, { threshold: 0 }).observe(app.closest('section') || app);
 	}
 	app.addEventListener('focusin', function (e) {
-		if (isMobile() && /^(INPUT|TEXTAREA)$/.test(e.target.tagName)) { mBottom.setAttribute('data-kb', 'true'); }
+		if (isMobile() && /^(INPUT|TEXTAREA)$/.test(e.target.tagName) && e.target.type !== 'file') { mBottom.setAttribute('data-kb', 'true'); }
 	});
 	app.addEventListener('focusout', function () { mBottom.removeAttribute('data-kb'); });
 
