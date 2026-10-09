@@ -95,8 +95,8 @@
 
 	/* ---------- Utilidades ---------- */
 	function clone(o) { return JSON.parse(JSON.stringify(o)); }
-	function $(sel, ctx) { return (ctx || app).querySelector(sel); }
-	function $all(sel, ctx) { return Array.prototype.slice.call((ctx || app).querySelectorAll(sel)); }
+	function $(sel, ctx) { return (ctx || document).querySelector(sel); }
+	function $all(sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); }
 	function practical() { return state.profile === 'practical'; }
 
 	function h(tag, cls, text, children) {
@@ -591,9 +591,9 @@
 		next.click();
 	});
 
-	app.addEventListener('click', function (e) {
+	function onClick(e) {
 		var t = e.target.closest('button');
-		if (!t || !app.contains(t)) { return; }
+		if (!t) { return; }
 
 		var add = t.getAttribute('data-add');
 		if (add) {
@@ -680,7 +680,9 @@
 			var opened = $('[data-m-entry="' + tg + '"]');
 			if (opened && mOpen[tp[0]] !== -1) { opened.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
 		}
-	});
+	}
+	// La barra inferior y la vista previa viven en <body> (ver más abajo), así que escuchan por su cuenta.
+	[app, $('#m-bottom'), $('#m-overlay')].forEach(function (root) { root.addEventListener('click', onClick); });
 
 	/* ---------- Estilo, perfil y pestañas de escritorio ---------- */
 	function setStyle(name) {
@@ -754,6 +756,10 @@
 	var mStepId = 'setup';
 	var mOpen = { experience: 0, education: 0, achievements: 0 };
 	var lastFocus = null;
+
+	// position:fixed relativo al viewport pase lo que pase con los ancestros del tema (transform, filter, contain…).
+	document.body.appendChild(mBottom);
+	document.body.appendChild(overlay);
 
 	function mSteps() {
 		var s = [

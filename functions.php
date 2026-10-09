@@ -94,7 +94,7 @@ function cvcraft_enqueue_assets() {
 		'cvcraft-app',
 		get_template_directory_uri() . '/assets/css/app.css',
 		array( 'cvcraft-google-fonts' ),
-		CVCRAFT_VERSION
+		(string) filemtime( get_template_directory() . '/assets/css/app.css' )
 	);
 
 	if ( cvcraft_needs_generator() ) {
@@ -109,7 +109,7 @@ function cvcraft_enqueue_assets() {
 			'cvcraft-generator',
 			get_template_directory_uri() . '/assets/js/cv-generator.js',
 			array( 'cvcraft-html2pdf' ),
-			CVCRAFT_VERSION,
+			(string) filemtime( get_template_directory() . '/assets/js/cv-generator.js' ),
 			true
 		);
 	}

@@ -152,6 +152,9 @@ textarea.cv-input { resize: vertical; min-height: 5.5rem; }
 
 /* ---------- Interfaz móvil (asistente por pasos) ---------- */
 .m-top { position: sticky; top: 0.5rem; z-index: 30; }
+/* La barra inferior y la vista previa se mueven a <body>: reponemos los reset que da .wp-block-html. */
+.m-bottom button, .cv-overlay button { font: inherit; cursor: pointer; background: transparent; }
+.m-bottom svg, .cv-overlay svg { display: block; }
 .m-btn {
 	min-height: 3rem;
 	display: inline-flex;
@@ -164,7 +167,7 @@ textarea.cv-input { resize: vertical; min-height: 5.5rem; }
 	font-size: 0.95rem;
 	-webkit-tap-highlight-color: transparent;
 }
-.m-btn-primary {
+.m-bottom .m-btn-primary, .cv-overlay .m-btn-primary, .m-btn-primary {
 	background: linear-gradient(90deg, #1e3a5f, #4f46e5);
 	color: #fff;
 	box-shadow: 0 8px 20px -8px rgba(79, 70, 229, 0.55);
@@ -267,6 +270,10 @@ html.cv-lock { overflow: hidden; }
 	background: #fff;
 	color: #1e3a5f;
 	box-shadow: 0 2px 8px rgba(30, 58, 95, 0.15);
+}
+
+@media (min-width: 1024px) {
+	.m-bottom, .cv-overlay { display: none !important; }
 }
 
 /* Campos táctiles: 16px evita el zoom automático de iOS */
