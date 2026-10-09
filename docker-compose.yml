@@ -1,0 +1,97 @@
+# Entorno local de desarrollo para cv-craft-premium.
+# Uso:  docker compose up -d   →   http://localhost:8080   (admin / admin)
+# Parar: docker compose down     Borrar todo: docker compose down -v
+name: cv-craft-premium
+
+services:
+  db:
+    image: mariadb:11
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: wordpress
+      MARIADB_USER: wordpress
+      MARIADB_PASSWORD: wordpress
+      MARIADB_ROOT_PASSWORD: root
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  wordpress:
+    image: wordpress:6.7-php8.3-apache
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DEBUG: "1"
+      WORDPRESS_CONFIG_EXTRA: |
+        define('WP_ENVIRONMENT_TYPE', 'local');
+        define('FS_METHOD', 'direct');
+    volumes:
+      - wp_data:/var/www/html
+      # El tema se monta en vivo: edita los archivos y recarga el navegador.
+      - ./:/var/www/html/wp-content/themes/cv-craft-premium
+
+  # Instala WordPress, activa el tema y crea las páginas legales con sus patrones.
+  # Es idempotente: se puede volver a ejecutar con `docker compose run --rm setup`.
+  setup:
+    image: wordpress:cli-php8.3
+    user: "33:33"
+    depends_on:
+      db:
+        condition: service_healthy
+      wordpress:
+        condition: service_started
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+    volumes:
+      - wp_data:/var/www/html
+      - ./:/var/www/html/wp-content/themes/cv-craft-premium
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -e
+        until [ -f wp-config.php ]; do echo "Esperando a wp-config.php…"; sleep 2; done
+        until wp db check >/dev/null 2>&1; do echo "Esperando a la base de datos…"; sleep 2; done
+
+        if ! wp core is-installed 2>/dev/null; then
+          wp core install --url=http://localhost:8080 --title="CV Craft" \
+            --admin_user=admin --admin_password=admin --admin_email=admin@example.com --skip-email
+        fi
+
+        wp language core install es_ES --activate || true
+        wp theme activate cv-craft-premium
+        wp rewrite structure '/%postname%/' --hard
+
+        mk() { # slug, título, patrón
+          if [ -z "$(wp post list --post_type=page --name="$1" --field=ID)" ]; then
+            wp post create --post_type=page --post_status=publish --post_name="$1" \
+              --post_title="$2" --post_content="<!-- wp:pattern {\"slug\":\"cv-craft-premium/$3\"} /-->"
+          fi
+        }
+        mk politica-de-privacidad "Política de Privacidad" legal-privacy
+        mk terminos-de-servicio "Términos de Servicio y Aviso Legal" legal-terms
+        mk contacto "Contacto" legal-contact
+
+        # La portada usa front-page.html (plantilla del tema), no una página estática.
+        wp option update show_on_front posts
+        wp rewrite flush --hard
+        echo "Listo → http://localhost:8080  (admin / admin)"
+    restart: "no"
+
+volumes:
+  db_data:
+  wp_data:

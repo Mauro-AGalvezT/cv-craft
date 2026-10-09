@@ -1,0 +1,25 @@
+/*
+Theme Name: CV Craft Premium
+Theme URI: https://example.com/cv-craft-premium
+Author: CV Craft
+Description: Tema de bloques (FSE) con un generador de currículums en tiempo real. Dos estilos de plantilla (Clásico Corporativo y Moderno Creativo) y descarga en PDF A4 procesada 100% en el navegador, sin guardar datos en el servidor.
+Version: 1.0.0
+Requires at least: 6.6
+Tested up to: 6.7
+Requires PHP: 7.4
+License: GPL-2.0-or-later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: cv-craft-premium
+Tags: full-site-editing, block-patterns, one-column, custom-colors, translation-ready
+*/
+
+/* Los estilos de la app viven en assets/css/app.css. Aquí solo el fondo global. */
+body {
+	background-color: #f6f8fc;
+	background-image:
+		radial-gradient(60rem 40rem at 10% -10%, rgba(99, 102, 241, 0.14), transparent 60%),
+		radial-gradient(50rem 36rem at 95% 5%, rgba(14, 165, 233, 0.12), transparent 60%),
+		linear-gradient(180deg, #f8fafc 0%, #eef2fb 100%);
+	background-repeat: no-repeat;
+	-webkit-font-smoothing: antialiased;
+}

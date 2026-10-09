@@ -1,0 +1,152 @@
+/* CV Craft Premium – complementos a Tailwind (preflight desactivado). */
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	border: 0 solid #e5e7eb;
+}
+
+/* Reset de márgenes solo dentro de nuestros bloques HTML. */
+:where(.wp-block-html) :where(h1, h2, h3, h4, p, ul, ol, dl, dd, figure) {
+	margin: 0;
+}
+:where(.wp-block-html) :where(ul, ol) {
+	padding: 0;
+	list-style: none;
+}
+:where(.wp-block-html) :where(button) {
+	background: transparent;
+	font: inherit;
+	color: inherit;
+	cursor: pointer;
+}
+:where(.wp-block-html) svg {
+	display: block;
+}
+.wp-block-html a {
+	text-decoration: none;
+}
+
+html {
+	scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+	html { scroll-behavior: auto; }
+	* { transition: none !important; animation: none !important; }
+}
+
+/* Glassmorphism */
+.glass {
+	background: rgba(255, 255, 255, 0.66);
+	-webkit-backdrop-filter: blur(18px) saturate(160%);
+	backdrop-filter: blur(18px) saturate(160%);
+	border: 1px solid rgba(255, 255, 255, 0.7);
+	box-shadow: 0 10px 40px -12px rgba(30, 58, 95, 0.18);
+}
+
+/* Campos de formulario */
+.cv-input {
+	display: block;
+	width: 100%;
+	padding: 0.6rem 0.8rem;
+	font: inherit;
+	font-size: 0.925rem;
+	color: #0f172a;
+	background: rgba(255, 255, 255, 0.9);
+	border: 1px solid #cbd5e1;
+	border-radius: 0.75rem;
+	transition: border-color 0.15s, box-shadow 0.15s;
+}
+.cv-input:focus {
+	outline: none;
+	border-color: #4f46e5;
+	box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.18);
+}
+textarea.cv-input { resize: vertical; min-height: 5.5rem; }
+.cv-label {
+	display: block;
+	font-size: 0.78rem;
+	font-weight: 600;
+	color: #475569;
+	margin-bottom: 0.3rem;
+}
+
+/* Pestañas (selector de estilo, formulario y móvil) */
+.cv-tab {
+	transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+	color: #475569;
+	border-radius: 0.75rem;
+	font-weight: 600;
+	cursor: pointer;
+	white-space: nowrap;
+}
+.cv-tab:hover { color: #1e3a5f; }
+.cv-tab[aria-selected="true"] {
+	background: #fff;
+	color: #1e3a5f;
+	box-shadow: 0 2px 10px rgba(30, 58, 95, 0.14);
+}
+.cv-tab:focus-visible,
+.cv-btn:focus-visible {
+	outline: 2px solid #4f46e5;
+	outline-offset: 2px;
+}
+
+/* Hoja A4 (210 mm ≈ 794 px a 96 dpi) */
+.cv-sheet {
+	width: 794px;
+	min-height: 1120px;
+	background: #fff;
+	transform-origin: top left;
+}
+.cv-sheet-wrap {
+	box-shadow: 0 25px 60px -20px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(15, 23, 42, 0.06);
+	background: #fff;
+	overflow: hidden;
+	/* CLS = 0: el espacio de la hoja A4 queda reservado antes de que cargue ningún script. */
+	aspect-ratio: 210 / 297;
+	contain: layout paint;
+	contain-intrinsic-size: 794px 1123px;
+}
+#cv-stage { min-height: 1px; }
+#cv-sheet { will-change: transform; }
+
+/* Subida de foto */
+.cv-drop { transition: border-color 0.2s, background 0.2s; }
+.cv-drop[data-drag="true"] {
+	border-color: #4f46e5;
+	background: rgba(79, 70, 229, 0.06);
+}
+.cv-file:focus-within { outline: 2px solid #4f46e5; outline-offset: 2px; }
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* Perfil práctico: más peso visual a experiencia, habilidades y logros */
+.cv-tab[data-weight="strong"] { font-weight: 700; color: #1e3a5f; }
+.cv-tab[data-weight="dim"] { opacity: 0.6; font-weight: 500; }
+.cv-tab[data-weight="dim"][aria-selected="true"] { opacity: 1; }
+.cv-tab[hidden] { display: none; }
+
+/* Móvil: pestañas Editar / Vista previa */
+@media (max-width: 1023px) {
+	#cv-app[data-mobile-view="edit"] [data-pane="preview"] { display: none; }
+	#cv-app[data-mobile-view="preview"] [data-pane="edit"] { display: none; }
+}
+
+[data-form-panel][hidden] { display: none; }
+
+.cv-fade { animation: cvFade 0.25s ease; }
+@keyframes cvFade {
+	from { opacity: 0; transform: translateY(4px); }
+	to { opacity: 1; transform: none; }
+}
