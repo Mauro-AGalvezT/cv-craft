@@ -681,8 +681,8 @@
 			if (opened && mOpen[tp[0]] !== -1) { opened.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }
 		}
 	}
-	// La barra inferior y la vista previa viven en <body> (ver más abajo), así que escuchan por su cuenta.
-	[app, $('#m-bottom'), $('#m-overlay')].forEach(function (root) { root.addEventListener('click', onClick); });
+	// La vista previa vive en <body> (ver más abajo), así que escucha por su cuenta.
+	[app, $('#m-overlay')].forEach(function (root) { root.addEventListener('click', onClick); });
 
 	/* ---------- Estilo, perfil y pestañas de escritorio ---------- */
 	function setStyle(name) {
@@ -749,7 +749,6 @@
 	var mHint = $('#m-hint');
 	var mCount = $('#m-count');
 	var mBar = $('#m-bar');
-	var mBottom = $('#m-bottom');
 	var mPrevBtn = $('[data-m-prev]');
 	var mNextBtn = $('[data-m-next]');
 	var overlay = $('#m-overlay');
@@ -757,8 +756,7 @@
 	var mOpen = { experience: 0, education: 0, achievements: 0 };
 	var lastFocus = null;
 
-	// position:fixed relativo al viewport pase lo que pase con los ancestros del tema (transform, filter, contain…).
-	document.body.appendChild(mBottom);
+	// La vista previa es position:fixed: en <body> no depende de ningún ancestro del tema.
 	document.body.appendChild(overlay);
 
 	function mSteps() {
@@ -987,6 +985,11 @@
 		prev.setAttribute('data-m-preview', '');
 		w.appendChild(prev);
 
+		var dl = h('button', 'cv-btn m-btn m-btn-primary w-full', 'Descargar PDF');
+		dl.type = 'button';
+		dl.setAttribute('data-download', '');
+		w.appendChild(dl);
+
 		var st = h('p', 'text-xs text-slate-500 min-h-[1rem]');
 		st.setAttribute('data-cv-status', '');
 		st.setAttribute('role', 'status');
@@ -1046,25 +1049,12 @@
 		if (e.key === 'Escape' && !overlay.hidden) { closePreview(); }
 	});
 
-	// La barra inferior solo aparece mientras el generador está en pantalla,
-	// y se oculta mientras el teclado está abierto (evita tapar los campos).
-	if ('IntersectionObserver' in window) {
-		new IntersectionObserver(function (entries) {
-			mBottom.setAttribute('data-show', String(entries[0].isIntersecting && isMobile()));
-		}, { threshold: 0 }).observe(app.closest('section') || app);
-	}
-	app.addEventListener('focusin', function (e) {
-		if (isMobile() && /^(INPUT|TEXTAREA)$/.test(e.target.tagName) && e.target.type !== 'file') { mBottom.setAttribute('data-kb', 'true'); }
-	});
-	app.addEventListener('focusout', function () { mBottom.removeAttribute('data-kb'); });
-
 	function onMode() {
 		app.setAttribute('data-mode', isMobile() ? 'mobile' : 'desktop');
 		if (isMobile()) {
 			renderMobileStep();
 		} else {
 			if (!overlay.hidden) { closePreview(); }
-			mBottom.setAttribute('data-show', 'false');
 			refreshAll();
 			return;
 		}

@@ -178,9 +178,9 @@
 					<p id="m-hint" class="text-sm text-slate-500 min-h-[1.25rem]">Elige cómo quieres que se vea.</p>
 				</div>
 
-				<div id="m-step" class="py-4 pb-32 min-h-[520px]"></div>
+				<div id="m-step" class="py-4 min-h-[480px]"></div>
 
-				<div id="m-bottom" class="m-bottom glass" data-show="false">
+				<div id="m-bottom" class="m-nav glass">
 					<button type="button" data-m-prev disabled class="cv-btn m-btn border border-slate-300 bg-white text-slate-700 disabled:opacity-40">Atrás</button>
 					<button type="button" data-m-next data-primary="false" class="cv-btn m-btn m-btn-primary flex-1">Siguiente</button>
 				</div>
